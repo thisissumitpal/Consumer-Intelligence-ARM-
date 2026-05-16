@@ -30,7 +30,7 @@ const eventSchema = new mongoose.Schema({
   }
 }, { timestamps: true });
 
-// Indexes for efficient querying in segmentation and scoring
+
 eventSchema.index({ user: 1, timestamp: -1 });
 eventSchema.index({ user: 1, event_type: 1 });
 eventSchema.index({ brand: 1 });

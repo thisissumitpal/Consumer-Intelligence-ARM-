@@ -2,7 +2,7 @@ const Event = require('../models/Event');
 const User = require('../models/User');
 const Brand = require('../models/Brand');
 
-// ── Log a new event ─────────────────────────────────────────────
+
 exports.createEvent = async (req, res) => {
   try {
     const { userId, brandId, event_type, value, metadata, timestamp } = req.body;
@@ -26,7 +26,7 @@ exports.createEvent = async (req, res) => {
       timestamp: timestamp || new Date(),
     });
 
-    // Update lifecycle_stage to ACTIVE if dormant/new
+    
     if (['NEW', 'DORMANT', 'CHURNED'].includes(user.lifecycle_stage)) {
       user.lifecycle_stage = 'ACTIVE';
       await user.save();
@@ -38,7 +38,7 @@ exports.createEvent = async (req, res) => {
   }
 };
 
-// ── Get events with optional filters ────────────────────────────
+
 exports.getEvents = async (req, res) => {
   try {
     const { userId, brandId, event_type, limit = 50, page = 1 } = req.query;

@@ -43,9 +43,7 @@ function randomDate(daysBack) {
 }
 
 async function seed() {
-  console.log('🌱 Seeding database...');
-
-  // Clear existing data
+  
   await Promise.all([
     User.deleteMany({}),
     Brand.deleteMany({}),
@@ -80,12 +78,12 @@ async function seed() {
   await UserBrandAssociation.insertMany(associations);
   console.log(`   ✓ Created ${associations.length} brand associations`);
 
-  // Create events
+  
   const events = [];
   for (const user of users) {
     const userAssocs = associations.filter(a => a.user.equals(user._id));
 
-    // Determine event count based on lifecycle stage for realistic data
+
     let eventCount;
     switch (user.lifecycle_stage) {
       case 'ACTIVE': eventCount = Math.floor(Math.random() * 20) + 8; break;
@@ -100,13 +98,13 @@ async function seed() {
       let eventType = randomItem(EVENT_TYPES);
       let value = 0;
 
-      // Force High Value for test user
+      
       if (user.email === 'test.highvalue@email.com') {
         eventType = 'PURCHASE';
         value = 200; // 3 purchases will exceed 500
       }
 
-      // For DORMANT users, events should be older than 30 days
+
       let timestamp;
       if (user.lifecycle_stage === 'DORMANT') {
         timestamp = randomDate(120);

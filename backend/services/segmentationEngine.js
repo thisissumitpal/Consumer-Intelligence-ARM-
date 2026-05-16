@@ -8,14 +8,11 @@ const CONFIG = {
   CROSS_BRAND_MIN: 2,               // Registered in >= 2 brands
 };
 
-/**
- * Compute all applicable segments for a given user.
- * Returns an array of segment objects with name & reasoning.
- */
+
 async function computeSegments(userId) {
   const segments = [];
 
-  // ── 1. High Value User ────────────────────────────────────────
+ 
   const spendAgg = await Event.aggregate([
     { $match: { user: userId, event_type: 'PURCHASE' } },
     { $group: { _id: null, totalSpend: { $sum: '$value' } } },
@@ -29,7 +26,7 @@ async function computeSegments(userId) {
     });
   }
 
-  // ── 2. Cross-Brand User ───────────────────────────────────────
+ 
   const brandCount = await UserBrandAssociation.countDocuments({ user: userId });
   if (brandCount >= CONFIG.CROSS_BRAND_MIN) {
     segments.push({
@@ -39,7 +36,7 @@ async function computeSegments(userId) {
     });
   }
 
-  // ── 3. Dormant User ──────────────────────────────────────────
+ 
   const dormantCutoff = new Date();
   dormantCutoff.setDate(dormantCutoff.getDate() - CONFIG.DORMANT_DAYS);
   const recentEventCount = await Event.countDocuments({
@@ -54,9 +51,7 @@ async function computeSegments(userId) {
     });
   }
 
-  // ── 4. Lifecycle Transition Candidate ─────────────────────────
-  // Heuristic: registered in >1 brand AND has engagement in a newer brand
-  //            but no purchases there yet.
+
   if (brandCount >= 2) {
     const associations = await UserBrandAssociation.find({ user: userId })
       .sort({ registered_at: -1 });

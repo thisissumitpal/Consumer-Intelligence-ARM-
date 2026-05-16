@@ -5,7 +5,7 @@ const Event = require('../models/Event');
 const { computeSegments } = require('../services/segmentationEngine');
 const { computePropensityScore } = require('../services/propensityScoring');
 
-// ── Create or Update a User (Upsert by email) ──────────────────
+
 exports.createUser = async (req, res) => {
   try {
     const { email, name, demographics, lifecycle_stage } = req.body;
@@ -25,7 +25,7 @@ exports.createUser = async (req, res) => {
   }
 };
 
-// ── Get all users ───────────────────────────────────────────────
+
 exports.getUsers = async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1;
@@ -37,7 +37,7 @@ exports.getUsers = async (req, res) => {
       User.countDocuments(),
     ]);
 
-    // For each user, attach brand count & latest event
+    
     const enrichedUsers = await Promise.all(
       users.map(async (u) => {
         const brandCount = await UserBrandAssociation.countDocuments({ user: u._id });
@@ -56,7 +56,7 @@ exports.getUsers = async (req, res) => {
   }
 };
 
-// ── Get single user by ID with full profile ─────────────────────
+
 exports.getUserById = async (req, res) => {
   try {
     const user = await User.findById(req.params.id);
@@ -82,7 +82,7 @@ exports.getUserById = async (req, res) => {
   }
 };
 
-// ── Register a user to a brand ──────────────────────────────────
+
 exports.registerBrand = async (req, res) => {
   try {
     const { brandId, acquisition_source } = req.body;
@@ -100,7 +100,7 @@ exports.registerBrand = async (req, res) => {
       { new: true, upsert: true }
     );
 
-    // Update lifecycle stage to ACTIVE if still NEW
+    
     if (user.lifecycle_stage === 'NEW') {
       user.lifecycle_stage = 'ACTIVE';
       await user.save();
@@ -112,7 +112,7 @@ exports.registerBrand = async (req, res) => {
   }
 };
 
-// ── Get intelligence only (segments + propensity) ───────────────
+
 exports.getIntelligence = async (req, res) => {
   try {
     const user = await User.findById(req.params.id);

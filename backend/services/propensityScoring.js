@@ -1,15 +1,12 @@
 const Event = require('../models/Event');
 
-/**
- * Calculate a spending propensity score (0-100) for a given user.
- * Returns { score, rationale }.
- */
+
 async function computePropensityScore(userId) {
   const now = new Date();
   let score = 0;
   const signals = [];
 
-  // ── Fetch all events for this user ────────────────────────────
+
   const events = await Event.find({ user: userId }).sort({ timestamp: -1 });
 
   if (events.length === 0) {
@@ -19,7 +16,7 @@ async function computePropensityScore(userId) {
     };
   }
 
-  // ── 1. Recency (max 35 points) ────────────────────────────────
+
   const lastEvent = events[0];
   const daysSinceLast = (now - new Date(lastEvent.timestamp)) / (1000 * 60 * 60 * 24);
   let recencyScore = 0;
@@ -41,7 +38,7 @@ async function computePropensityScore(userId) {
   }
   score += recencyScore;
 
-  // ── 2. Purchase Frequency (max 35 points) ─────────────────────
+ 
   const purchases = events.filter(e => e.event_type === 'PURCHASE');
   const purchaseCount = purchases.length;
   let freqScore = 0;
@@ -63,7 +60,7 @@ async function computePropensityScore(userId) {
   }
   score += freqScore;
 
-  // ── 3. Engagement Activity (max 30 points) ────────────────────
+  
   const thirtyDaysAgo = new Date();
   thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
   const recentEngagements = events.filter(
@@ -90,7 +87,7 @@ async function computePropensityScore(userId) {
   }
   score += engagementScore;
 
-  // ── Build human-readable rationale ────────────────────────────
+  
   const capitalizedFirst = signals[0].charAt(0).toUpperCase() + signals[0].slice(1);
   const rationale = capitalizedFirst +
     (signals.length > 1 ? ' with ' + signals.slice(1).join(' and ') : '') + '.';

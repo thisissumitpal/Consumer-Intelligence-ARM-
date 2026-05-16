@@ -22,7 +22,7 @@ const userBrandAssociationSchema = new mongoose.Schema({
   }
 }, { timestamps: true });
 
-// Compound unique index — a user can only register once per brand
+
 userBrandAssociationSchema.index({ user: 1, brand: 1 }, { unique: true });
 
 module.exports = mongoose.model('UserBrandAssociation', userBrandAssociationSchema);

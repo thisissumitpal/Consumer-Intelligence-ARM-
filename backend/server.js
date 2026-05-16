@@ -9,14 +9,14 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/consumer_intelligence';
 
-// ── Middleware ───────────────────────────────────────────────────
+
 app.use(cors());
 app.use(express.json());
 
-// ── API Routes ──────────────────────────────────────────────────
+
 app.use('/api', apiRoutes);
 
-// ── Seed Endpoint ───────────────────────────────────────────────
+
 app.post('/api/seed', async (req, res) => {
   try {
     await seed();
@@ -26,7 +26,7 @@ app.post('/api/seed', async (req, res) => {
   }
 });
 
-// ── Dashboard Stats Endpoint ────────────────────────────────────
+
 app.get('/api/dashboard', async (req, res) => {
   try {
     const User = require('./models/User');
@@ -41,17 +41,17 @@ app.get('/api/dashboard', async (req, res) => {
       UserBrandAssociation.countDocuments(),
     ]);
 
-    // Lifecycle distribution
+  
     const lifecycleDist = await User.aggregate([
       { $group: { _id: '$lifecycle_stage', count: { $sum: 1 } } },
     ]);
 
-    // Event type distribution
+  
     const eventDist = await Event.aggregate([
       { $group: { _id: '$event_type', count: { $sum: 1 } } },
     ]);
 
-    // Revenue by brand
+   
     const revenueByBrand = await Event.aggregate([
       { $match: { event_type: 'PURCHASE' } },
       { $group: { _id: '$brand', totalRevenue: { $sum: '$value' }, purchaseCount: { $sum: 1 } } },
@@ -74,7 +74,7 @@ app.get('/api/dashboard', async (req, res) => {
   }
 });
 
-// ── Connect to MongoDB & Start Server ───────────────────────────
+
 mongoose.connect(MONGODB_URI)
   .then(() => {
     console.log('✅ Connected to MongoDB');

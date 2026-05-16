@@ -1,6 +1,6 @@
 const Brand = require('../models/Brand');
 
-// ── Create a brand ──────────────────────────────────────────────
+
 exports.createBrand = async (req, res) => {
   try {
     const { name, category } = req.body;
@@ -18,7 +18,7 @@ exports.createBrand = async (req, res) => {
   }
 };
 
-// ── Get all brands ──────────────────────────────────────────────
+
 exports.getBrands = async (req, res) => {
   try {
     const brands = await Brand.find().sort({ name: 1 });
